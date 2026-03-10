@@ -1,0 +1,32 @@
+name: FakeStore API Automation Tests
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  api-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Install HTML Reporter
+        run: npm install -g newman-reporter-htmlextra
+
+      - name: Run Postman Tests
+        run: |
+          mkdir -p reports
+          newman run collections/fakestore_collection.json \
+          -e environments/fakestore_env.json \
+          -r htmlextra \
+          --reporter-htmlextra-export reports/report.html
